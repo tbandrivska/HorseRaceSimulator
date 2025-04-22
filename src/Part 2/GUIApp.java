@@ -11,7 +11,9 @@ public class GUIApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Labels and dropdowns
+        Label previewLabel = new Label("🐎");
+        previewLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: grey;");
+
         TextField nameField = new TextField();
         nameField.setPromptText("Enter horse name");
 
@@ -68,6 +70,7 @@ public class GUIApp extends Application {
 
         VBox root = new VBox(10,
                 new Label("Horse Customisation:"),
+                previewLabel,
                 nameField,
                 breedBox,
                 coatBox,
@@ -82,6 +85,17 @@ public class GUIApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Horse Customiser");
         primaryStage.show();
+        symbolField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.isEmpty()) {
+                previewLabel.setText(String.valueOf(newVal.charAt(0)));
+            } else {
+                previewLabel.setText("🐎"); // fallback
+            }
+        });
+        nameField.textProperty().addListener((obs, oldVal, newVal) -> {
+            previewLabel.setTooltip(new Tooltip(newVal));
+        });
+
     }
 
     public static void main(String[] args) {
