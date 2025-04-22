@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 
 public class GUIApp extends Application {
     private final List<CustomHorse> horseList = new ArrayList<>();
+    private double wallet = 100.0;
 
     @Override
     public void start(Stage primaryStage) {
@@ -38,14 +39,19 @@ public class GUIApp extends Application {
 
         ComboBox<String> betBox = new ComboBox<>();
         betBox.setPromptText("Place your bet (select horse name)");
+      //Textfields and buttons and labels
 
         TextField symbolField = new TextField();
         symbolField.setPromptText("Symbol (e.g. ♞)");
+        TextField betAmountField = new TextField();
+        betAmountField.setPromptText("Enter bet amount (£)");
 
         Button createButton = new Button("Create Horse");
 
         Label outputLabel = new Label();
+        Label walletLabel = new Label("Wallet: £" + wallet);
 
+        //creation of buttons
         createButton.setOnAction(e ->
          {
             String saddle = saddleBox.getValue();
@@ -78,8 +84,24 @@ public class GUIApp extends Application {
         });
         Button createRaceButton = new Button("Start Race!");
         createRaceButton.setOnAction(e -> {
-            if (horseList.isEmpty() || betBox.getValue() == null) {
-                outputLabel.setText("Please create at least one horse and place your bet.");
+            String selectedHorse = betBox.getValue();
+            String betAmountText = betAmountField.getText();
+
+            if (horseList.isEmpty() || selectedHorse == null || betAmountText.isEmpty()) {
+                outputLabel.setText("Please create at least one horse, place your bet, and enter an amount.");
+                return;
+            }
+
+            double bet;
+            try {
+                bet = Double.parseDouble(betAmountText);
+            } catch (NumberFormatException ex) {
+                outputLabel.setText("Please enter a valid number for your bet.");
+                return;
+            }
+
+            if (bet > wallet) {
+                outputLabel.setText("You don't have enough funds! Wallet: £" + wallet);
                 return;
             }
 
@@ -87,16 +109,20 @@ public class GUIApp extends Application {
             Random rand = new Random();
             CustomHorse winner = horseList.get(rand.nextInt(horseList.size()));
 
-            // Summary
+            // Check result
             String result = "🏁 The race is over!\nWinner: " + winner.getName();
-            if (winner.getName().equals(betBox.getValue())) {
-                result += "\n🎉 You WIN your bet!";
+            if (winner.getName().equals(selectedHorse)) {
+                wallet += bet; // win = double your money (simple logic)
+                result += "\n🎉 You WIN £" + bet + "!";
             } else {
-                result += "\n😢 You lost the bet. Try again!";
+                wallet -= bet;
+                result += "\n😢 You lost £" + bet + ".";
             }
 
+            walletLabel.setText("Wallet: £" + String.format("%.2f", wallet));
             outputLabel.setText(result);
         });
+
 
         VBox root = new VBox(10,
                 new Label("Horse Customisation:"),
@@ -110,6 +136,9 @@ public class GUIApp extends Application {
                 createButton,
                 new Label("Race Options:"),
                 betBox,
+                betAmountField,
+                walletLabel,
+                createRaceButton,
                 outputLabel
         );
 
