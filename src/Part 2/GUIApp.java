@@ -1,6 +1,8 @@
 package Part2;
 
-
+import java.util.Random;
+import java.util.List;
+import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -8,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class GUIApp extends Application {
+    private final List<CustomHorse> horseList = new ArrayList<>();
 
     @Override
     public void start(Stage primaryStage) {
@@ -33,6 +36,9 @@ public class GUIApp extends Application {
         horseshoeBox.getItems().addAll("Regular", "Lightweight", "Spiked");
         horseshoeBox.setPromptText("Choose horseshoe type");
 
+        ComboBox<String> betBox = new ComboBox<>();
+        betBox.setPromptText("Place your bet (select horse name)");
+
         TextField symbolField = new TextField();
         symbolField.setPromptText("Symbol (e.g. ♞)");
 
@@ -40,7 +46,8 @@ public class GUIApp extends Application {
 
         Label outputLabel = new Label();
 
-        createButton.setOnAction(e -> {
+        createButton.setOnAction(e ->
+         {
             String saddle = saddleBox.getValue();
             String horseshoes = horseshoeBox.getValue();
 
@@ -61,11 +68,34 @@ public class GUIApp extends Application {
             };
 
             CustomHorse horse = new CustomHorse(name, breed, coat, symbol, saddle, horseshoes, confidence);
+            horseList.add(horse);
+            betBox.getItems().add(name);
             // Confidence logic based on saddle
             if ("Racing".equals(saddle)) {confidence += 0.1;};
             if ("Spiked".equals(horseshoes)) {confidence += 0.05;};
             if ("Decorative".equals(saddle)) {confidence -= 0.05;};
             outputLabel.setText(horse.toString());
+        });
+        Button createRaceButton = new Button("Start Race!");
+        createRaceButton.setOnAction(e -> {
+            if (horseList.isEmpty() || betBox.getValue() == null) {
+                outputLabel.setText("Please create at least one horse and place your bet.");
+                return;
+            }
+
+            // Random winner
+            Random rand = new Random();
+            CustomHorse winner = horseList.get(rand.nextInt(horseList.size()));
+
+            // Summary
+            String result = "🏁 The race is over!\nWinner: " + winner.getName();
+            if (winner.getName().equals(betBox.getValue())) {
+                result += "\n🎉 You WIN your bet!";
+            } else {
+                result += "\n😢 You lost the bet. Try again!";
+            }
+
+            outputLabel.setText(result);
         });
 
         VBox root = new VBox(10,
@@ -78,6 +108,8 @@ public class GUIApp extends Application {
                 horseshoeBox,
                 symbolField,
                 createButton,
+                new Label("Race Options:"),
+                betBox,
                 outputLabel
         );
 
