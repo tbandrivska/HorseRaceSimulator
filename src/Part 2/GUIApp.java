@@ -39,14 +39,18 @@ public class GUIApp extends Application {
         Label outputLabel = new Label();
 
         createButton.setOnAction(e -> {
+            String saddle = saddleBox.getValue();
+            String horseshoes = horseshoeBox.getValue();
+
             String name = nameField.getText();
             String breed = breedBox.getValue();
             String coat = coatBox.getValue();
             String symbolText = symbolField.getText();
             char symbol = (symbolText != null && !symbolText.isEmpty()) ? symbolText.charAt(0) : '?';
 
-            // Very basic confidence boost logic
+
             double confidence = switch (breed) {
+
                 case "Arabian" -> 0.8;
                 case "Thoroughbred" -> 0.6;
                 case "Quarter Horse" -> 0.5;
@@ -54,7 +58,11 @@ public class GUIApp extends Application {
                 default -> 0.5;
             };
 
-            CustomHorse horse = new CustomHorse(name, breed, coat, symbol, "Standard", "Regular", confidence);
+            CustomHorse horse = new CustomHorse(name, breed, coat, symbol, saddle, horseshoes, confidence);
+            // Confidence logic based on saddle
+            if ("Racing".equals(saddle)) {confidence += 0.1;};
+            if ("Spiked".equals(horseshoes)) {confidence += 0.05;};
+            if ("Decorative".equals(saddle)) {confidence -= 0.05;};
             outputLabel.setText(horse.toString());
         });
 
