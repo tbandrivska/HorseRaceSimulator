@@ -3,15 +3,23 @@ package Part2;
 import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
+
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class GUIApp extends Application {
-    private final List<CustomHorse> horseList = new ArrayList<>();
+    private final List<Part2.CustomHorse> horseList = new ArrayList<>();
     private double wallet = 100.0;
+
+    private Label horse1Label = new Label("Horse 1");
+    private Label horse2Label = new Label("Horse 2");
+    private Label horse3Label = new Label("Horse 3");
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -73,7 +81,7 @@ public class GUIApp extends Application {
                 default -> 0.5;
             };
 
-            CustomHorse horse = new CustomHorse(name, breed, coat, symbol, saddle, horseshoes, confidence);
+            Part2.CustomHorse horse = new Part2.CustomHorse(name, breed, coat, symbol, saddle, horseshoes, confidence);
             horseList.add(horse);
             betBox.getItems().add(name);
             // Confidence logic based on saddle
@@ -107,7 +115,7 @@ public class GUIApp extends Application {
 
             // Random winner
             Random rand = new Random();
-            CustomHorse winner = horseList.get(rand.nextInt(horseList.size()));
+            Part2.CustomHorse winner = horseList.get(rand.nextInt(horseList.size()));
 
             // Check result
             String result = "🏁 The race is over!\nWinner: " + winner.getName();
@@ -118,6 +126,18 @@ public class GUIApp extends Application {
                 wallet -= bet;
                 result += "\n😢 You lost £" + bet + ".";
             }
+            Label[] horseLabels = { horse1Label, horse2Label, horse3Label };
+            int winnerIndex = new Random().nextInt(horseLabels.length);
+
+            runRace(horseLabels, winnerIndex, () -> {
+                String winnerName = "Horse " + (winnerIndex + 1);
+                String selected = betBox.getValue();
+
+                boolean win = winnerName.equalsIgnoreCase(selected);
+               String result_ = "🏁 Race finished!\nWinner: " + winnerName;
+                result_ += win ? "\n🎉 You WIN!" : "\n😢 You lost.";
+                outputLabel.setText(result_);
+            });
 
             walletLabel.setText("Wallet: £" + String.format("%.2f", wallet));
             outputLabel.setText(result);
@@ -157,6 +177,22 @@ public class GUIApp extends Application {
             previewLabel.setTooltip(new Tooltip(newVal));
         });
 
+    }
+    private void runRace(Label[] horses, int winnerIndex, Runnable onFinish) {
+        // Reseting positions
+        for (Label horse : horses) {
+            horse.setTranslateX(0);
+        }
+
+        // Animating them
+        for (int i = 0; i < horses.length; i++) {
+            TranslateTransition t = new TranslateTransition(Duration.seconds(2 + Math.random()), horses[i]);
+            t.setToX(300);
+            if (i == horses.length - 1) {
+                t.setOnFinished(e -> onFinish.run());
+            }
+            t.play();
+        }
     }
 
     public static void main(String[] args) {
