@@ -15,15 +15,18 @@ import javafx.util.Duration;
 public class GUIApp extends Application {
     private final List<Part2.CustomHorse> horseList = new ArrayList<>();
     private double wallet = 100.0;
+    private final int MAX_HORSES = 6;
+    private VBox raceTrack = new VBox(10);
 
-    private Label horse1Label = new Label("Horse 1");
-    private Label horse2Label = new Label("Horse 2");
-    private Label horse3Label = new Label("Horse 3");
+    private final List<Label> horseLabels = new ArrayList<>();
+
 
 
     @Override
     public void start(Stage primaryStage) {
         Label previewLabel = new Label("🐎");
+        raceTrack.getChildren().add(new Label("🏁 Race Track:"));
+
         previewLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: grey;");
 
         TextField nameField = new TextField();
@@ -70,9 +73,13 @@ public class GUIApp extends Application {
             String coat = coatBox.getValue();
             String symbolText = symbolField.getText();
             char symbol = (symbolText != null && !symbolText.isEmpty()) ? symbolText.charAt(0) : '?';
+             if (horseLabels.size() >= MAX_HORSES) {
+                 outputLabel.setText("⚠️ You can only have 6 horses per race.");
+                 return;
+             }
 
 
-            double confidence = switch (breed) {
+             double confidence = switch (breed) {
 
                 case "Arabian" -> 0.8;
                 case "Thoroughbred" -> 0.6;
@@ -82,7 +89,14 @@ public class GUIApp extends Application {
             };
 
             Part2.CustomHorse horse = new Part2.CustomHorse(name, breed, coat, symbol, saddle, horseshoes, confidence);
-            horseList.add(horse);
+
+             Label horseLabel = new Label(symbol + " " + name); // or get from CustomHorse
+             horseLabel.setStyle("-fx-font-size: 28px;");
+             horseLabels.add(horseLabel);
+             raceTrack.getChildren().add(horseLabel);
+
+
+             horseList.add(horse);
             betBox.getItems().add(name);
             // Confidence logic based on saddle
             if ("Racing".equals(saddle)) {confidence += 0.1;};
@@ -90,6 +104,8 @@ public class GUIApp extends Application {
             if ("Decorative".equals(saddle)) {confidence -= 0.05;};
             outputLabel.setText(horse.toString());
         });
+
+
         Button createRaceButton = new Button("Start Race!");
         createRaceButton.setOnAction(e -> {
             String selectedHorse = betBox.getValue();
@@ -126,10 +142,10 @@ public class GUIApp extends Application {
                 wallet -= bet;
                 result += "\n😢 You lost £" + bet + ".";
             }
-            Label[] horseLabels = { horse1Label, horse2Label, horse3Label };
-            int winnerIndex = new Random().nextInt(horseLabels.length);
 
-            runRace(horseLabels, winnerIndex, () -> {
+            int winnerIndex = new Random().nextInt(horseLabels.size());
+         //Displaying running the race
+            runRace(horseLabels.toArray(new Label[0]), winnerIndex, () -> {
                 String winnerName = "Horse " + (winnerIndex + 1);
                 String selected = betBox.getValue();
 
@@ -154,6 +170,7 @@ public class GUIApp extends Application {
                 horseshoeBox,
                 symbolField,
                 createButton,
+                raceTrack,
                 new Label("Race Options:"),
                 betBox,
                 betAmountField,
@@ -161,11 +178,15 @@ public class GUIApp extends Application {
                 createRaceButton,
                 outputLabel
         );
-
+     // Setting the scene
         Scene scene = new Scene(root, 400, 350);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Horse Customiser");
         primaryStage.show();
+
+
+        //Preview label
+
         symbolField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.isEmpty()) {
                 previewLabel.setText(String.valueOf(newVal.charAt(0)));
