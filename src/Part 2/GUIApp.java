@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class GUIApp extends Application {
+    private Label statsLabel = new Label("💸 Betting Stats will appear here...");
     private final List<Part2.CustomHorse> horseList = new ArrayList<>();
     private double wallet = 100.0;
     private final int MAX_HORSES = 6;
@@ -152,10 +153,18 @@ public class GUIApp extends Application {
                 boolean win = winnerName.equalsIgnoreCase(selected);
                String result_ = "🏁 Race finished!\nWinner: " + winnerName;
                 result_ += win ? "\n🎉 You WIN!" : "\n😢 You lost.";
+                String bettingStats = "💵 Bet Placed On: " + selected + "\n" +
+                        "📈 Amount: £" + bet + "\n" +
+                        (win ? "🟢 RESULT: You WIN!" : "🔴 RESULT: You lost.") + "\n" +
+                        "💰 Wallet Balance: £" + String.format("%.2f", wallet);
+
+                statsLabel.setText(bettingStats);
+
                 outputLabel.setText(result_);
             });
 
             walletLabel.setText("Wallet: £" + String.format("%.2f", wallet));
+
             outputLabel.setText(result);
         });
 
@@ -171,6 +180,7 @@ public class GUIApp extends Application {
                 symbolField,
                 createButton,
                 raceTrack,
+                statsLabel,
                 new Label("Race Options:"),
                 betBox,
                 betAmountField,
