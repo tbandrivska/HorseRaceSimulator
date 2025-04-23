@@ -18,7 +18,7 @@ public class GUIApp extends Application {
     private double wallet = 100.0;
     private final int MAX_HORSES = 6;
     private VBox raceTrack = new VBox(10);
-
+    private ScrollPane raceTrackScrollPane = new ScrollPane();
     private final List<Label> horseLabels = new ArrayList<>();
 
 
@@ -27,6 +27,7 @@ public class GUIApp extends Application {
     public void start(Stage primaryStage) {
         Label previewLabel = new Label("🐎");
         raceTrack.getChildren().add(new Label("🏁 Race Track:"));
+
 
         previewLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: grey;");
 
@@ -51,7 +52,7 @@ public class GUIApp extends Application {
 
         ComboBox<String> betBox = new ComboBox<>();
         betBox.setPromptText("Place your bet (select horse name)");
-      //Textfields and buttons and labels
+        //Textfields and buttons and labels
 
         TextField symbolField = new TextField();
         symbolField.setPromptText("Symbol (e.g. ♞)");
@@ -65,7 +66,7 @@ public class GUIApp extends Application {
 
         //creation of buttons
         createButton.setOnAction(e ->
-         {
+        {
             String saddle = saddleBox.getValue();
             String horseshoes = horseshoeBox.getValue();
 
@@ -74,13 +75,13 @@ public class GUIApp extends Application {
             String coat = coatBox.getValue();
             String symbolText = symbolField.getText();
             char symbol = (symbolText != null && !symbolText.isEmpty()) ? symbolText.charAt(0) : '?';
-             if (horseLabels.size() >= MAX_HORSES) {
-                 outputLabel.setText("⚠️ You can only have 6 horses per race.");
-                 return;
-             }
+            if (horseLabels.size() >= MAX_HORSES) {
+                outputLabel.setText("⚠️ You can only have 6 horses per race.");
+                return;
+            }
 
 
-             double confidence = switch (breed) {
+            double confidence = switch (breed) {
 
                 case "Arabian" -> 0.8;
                 case "Thoroughbred" -> 0.6;
@@ -91,18 +92,27 @@ public class GUIApp extends Application {
 
             Part2.CustomHorse horse = new Part2.CustomHorse(name, breed, coat, symbol, saddle, horseshoes, confidence);
 
-             Label horseLabel = new Label(symbol + " " + name); // or get from CustomHorse
-             horseLabel.setStyle("-fx-font-size: 28px;");
-             horseLabels.add(horseLabel);
-             raceTrack.getChildren().add(horseLabel);
+            Label horseLabel = new Label(symbol + " " + name); // or get from CustomHorse
+            horseLabel.setStyle("-fx-font-size: 28px;");
+            horseLabels.add(horseLabel);
+            raceTrack.getChildren().add(horseLabel);
 
 
-             horseList.add(horse);
+            horseList.add(horse);
             betBox.getItems().add(name);
             // Confidence logic based on saddle
-            if ("Racing".equals(saddle)) {confidence += 0.1;};
-            if ("Spiked".equals(horseshoes)) {confidence += 0.05;};
-            if ("Decorative".equals(saddle)) {confidence -= 0.05;};
+            if ("Racing".equals(saddle)) {
+                confidence += 0.1;
+            }
+            ;
+            if ("Spiked".equals(horseshoes)) {
+                confidence += 0.05;
+            }
+            ;
+            if ("Decorative".equals(saddle)) {
+                confidence -= 0.05;
+            }
+            ;
             outputLabel.setText(horse.toString());
         });
 
@@ -145,13 +155,13 @@ public class GUIApp extends Application {
             }
 
             int winnerIndex = new Random().nextInt(horseLabels.size());
-         //Displaying running the race
+            //Displaying running the race
             runRace(horseLabels.toArray(new Label[0]), winnerIndex, () -> {
                 String winnerName = "Horse " + (winnerIndex + 1);
                 String selected = betBox.getValue();
 
                 boolean win = winnerName.equalsIgnoreCase(selected);
-               String result_ = "🏁 Race finished!\nWinner: " + winnerName;
+                String result_ = "🏁 Race finished!\nWinner: " + winnerName;
                 result_ += win ? "\n🎉 You WIN!" : "\n😢 You lost.";
                 String bettingStats = "💵 Bet Placed On: " + selected + "\n" +
                         "📈 Amount: £" + bet + "\n" +
@@ -185,15 +195,24 @@ public class GUIApp extends Application {
                 betBox,
                 betAmountField,
                 walletLabel,
+                raceTrackScrollPane,
                 createRaceButton,
                 outputLabel
         );
-     // Setting the scene
-        Scene scene = new Scene(root, 400, 350);
+        // Setting the scene
+        ScrollPane fullScrollPane = new ScrollPane(root);
+        fullScrollPane.setFitToWidth(true);
+        Scene scene = new Scene(fullScrollPane, 600, 800);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Horse Customiser");
         primaryStage.show();
 
+        //Window settings
+        raceTrack = new VBox(10);
+        raceTrackScrollPane.setContent(raceTrack);
+        raceTrackScrollPane.setFitToWidth(true);
+        raceTrackScrollPane.setPrefHeight(200);
+        raceTrackScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
         //Preview label
 
@@ -224,6 +243,8 @@ public class GUIApp extends Application {
             }
             t.play();
         }
+
+
     }
 
     public static void main(String[] args) {
