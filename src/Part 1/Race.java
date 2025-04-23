@@ -7,6 +7,9 @@ public class Race
     private Horse lane1Horse;
     private Horse lane2Horse;
     private Horse lane3Horse;
+    private Horse lane4Horse;
+    private Horse lane5Horse;
+    private Horse lane6Horse;
 
 
     public Race(int distance)
@@ -15,7 +18,11 @@ public class Race
         raceLength = distance;
         lane1Horse = null;
         lane2Horse = null;
-        lane3Horse = null;  }
+        lane3Horse = null;
+        lane4Horse = null;
+        lane5Horse = null;
+        lane6Horse = null;
+     }
 
     /**
      * Adds a horse to the race in a given lane
@@ -80,7 +87,7 @@ public class Race
             } catch (Exception e) {}
         }
 
-        // 🎉 Winner announcement
+        //Winner announcement
         if (winner != null) {
             System.out.println("\nAnd the winner is… " + winner.getName() + "!");
         } else {
