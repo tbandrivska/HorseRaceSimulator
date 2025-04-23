@@ -38,7 +38,6 @@ Welcome to the Horse Race Simulator - a dynamic JavaFX application where you can
 - **Race track** has its own scroll zone (if lots of horses)
 - Maximum of **6 horses** to ensure clean UI and readable display
 
----
 
 ## Setup Instructions
 
