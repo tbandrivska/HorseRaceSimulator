@@ -1,5 +1,6 @@
 package Part2;
 
+import java.awt.*;
 import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class GUIApp extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) {
+    public void startRaceGUI(Stage primaryStage) {
         Label previewLabel = new Label("🐎");
         raceTrack.getChildren().add(new Label("🏁 Race Track:"));
 
