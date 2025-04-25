@@ -180,6 +180,10 @@ public class GUIApp extends Application {
             }
             Part2.CustomHorse winnerHorse = Collections.max(progressMap.entrySet(), Map.Entry.comparingByValue()).getKey();
 
+            runTextBasedRace(horseList, 20, () -> {
+                // Post-race actions
+                System.out.println("Race complete!");
+            });
 
 
             walletLabel.setText("Wallet: £" + String.format("%.2f", wallet));
@@ -312,6 +316,9 @@ public class GUIApp extends Application {
             for (int i = 0; i < horseList.size(); i++) {
                 Part2.CustomHorse h = horseList.get(i);
                 int progress = h.getDistanceTravelled();
+                if (!h.hasFallen() && Math.random() < h.getConfidence()) {
+                    h.moveForward();
+                }
 
                 StringBuilder lane = new StringBuilder("|");
                 for (int j = 0; j < raceLength; j++) {
