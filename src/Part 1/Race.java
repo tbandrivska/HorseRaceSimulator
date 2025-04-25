@@ -1,15 +1,16 @@
+package Part1;
 import java.util.concurrent.TimeUnit;
 import java.lang.Math;
 
 public class Race
 {
     private int raceLength;
-    private Horse lane1Horse;
-    private Horse lane2Horse;
-    private Horse lane3Horse;
-    private Horse lane4Horse;
-    private Horse lane5Horse;
-    private Horse lane6Horse;
+    private Part1.Horse lane1Horse;
+    private Part1.Horse lane2Horse;
+    private Part1.Horse lane3Horse;
+    private Part1.Horse lane4Horse;
+    private Part1.Horse lane5Horse;
+    private Part1.Horse lane6Horse;
 
 
     public Race(int distance)
@@ -30,7 +31,7 @@ public class Race
      * @param theHorse the horse to be added to the race
      * @param laneNumber the lane that the horse will be added to
      */
-    public void addHorse(Horse theHorse, int laneNumber)
+    public void addHorse(Part1.Horse theHorse, int laneNumber)
     {
         if (laneNumber == 1)
         {
@@ -58,7 +59,7 @@ public class Race
      */
     public void startRace() {
         boolean finished = false;
-        Horse winner = null;
+        Part1.Horse winner = null;
 
         lane1Horse.goBackToStart();
         lane2Horse.goBackToStart();
@@ -96,7 +97,7 @@ public class Race
     }
 
 
-    private void moveHorse(Horse theHorse)
+    private void moveHorse(Part1.Horse theHorse)
     {
         //if the horse has fallen it cannot move,
         //so only run if it has not fallen
@@ -124,7 +125,7 @@ public class Race
      * @param theHorse The horse we are testing
      * @return true if the horse has won, false otherwise.
      */
-    private boolean raceWonBy(Horse theHorse) {
+    private boolean raceWonBy(Part1.Horse theHorse) {
         return !theHorse.hasFallen() && theHorse.getDistanceTravelled() >= raceLength;
     }
 
@@ -158,7 +159,7 @@ public class Race
      * |           X                      |
      * to show how far the horse has run
      */
-    private void printLane(Horse theHorse)
+    private void printLane(Part1.Horse theHorse)
     {
         //calculate how many spaces are needed before
         //and after the horse

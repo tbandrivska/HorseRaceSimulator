@@ -1,9 +1,14 @@
 package Part2;
+import Part1.Horse;
+import Part1.Race;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import javafx.scene.text.Font;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -25,6 +30,8 @@ public class GUIApp extends Application {
     private VBox raceTrack = new VBox(10);
     private ScrollPane raceTrackScrollPane = new ScrollPane();
     private final List<Label> horseLabels = new ArrayList<>();
+    private Label outputLabel = new Label();
+
 
 
 
@@ -66,7 +73,7 @@ public class GUIApp extends Application {
 
         Button createButton = new Button("Create Horse");
 
-        Label outputLabel = new Label();
+        outputLabel.setText("Race results will appear here.");
         Label walletLabel = new Label("Wallet: £" + wallet);
 
         //creation of buttons
@@ -152,7 +159,7 @@ public class GUIApp extends Application {
             // Check result
             String result = "🏁 The race is over!\nWinner: " + winner.getName();
             if (winner.getName().equals(selectedHorse)) {
-                wallet += bet; // win = double your money (simple logic)
+                wallet += bet;
                 result += "\n🎉 You WIN £" + bet + "!";
             } else {
                 wallet -= bet;
@@ -229,6 +236,18 @@ public class GUIApp extends Application {
             previewLabel.setTooltip(new Tooltip(newVal));
         });
 
+        // race animation
+        List<Label> raceLanes = new ArrayList<>();
+        VBox raceTrack = new VBox(10); // already exists
+
+        for (int i = 0; i < horseList.size(); i++) {
+            Label laneLabel = new Label("|                    |");
+            laneLabel.setFont(Font.font("Monospaced", 18));
+            raceLanes.add(laneLabel);
+            raceTrack.getChildren().add(laneLabel);
+        }
+
+
     }
     public void startRaceGUI(Stage stage) {
         start(stage);
@@ -272,6 +291,62 @@ public class GUIApp extends Application {
 
             move.play();
         }
+        
+    }
+    private void runTextBasedRace(List<Part2.CustomHorse> horseList, int raceLength, Runnable onFinish) {
+        List<Label> raceLanes = new ArrayList<>();
+        raceTrack.getChildren().clear(); // Clear any previous races
+
+        for (Part2.CustomHorse h : horseList) {
+            Label laneLabel = new Label("|                    |");
+            laneLabel.setFont(Font.font("Monospaced", 18));
+            raceLanes.add(laneLabel);
+            raceTrack.getChildren().add(laneLabel);
+            h.goBackToStart(); // Reset position
+        }
+
+        Timeline raceTimeline = new Timeline();
+        raceTimeline.setCycleCount(Animation.INDEFINITE);
+
+        KeyFrame frame = new KeyFrame(Duration.millis(200), event -> {
+            for (int i = 0; i < horseList.size(); i++) {
+                Part2.CustomHorse h = horseList.get(i);
+                int progress = h.getDistanceTravelled();
+
+                StringBuilder lane = new StringBuilder("|");
+                for (int j = 0; j < raceLength; j++) {
+                    if (j == progress) {
+                        lane.append(h.hasFallen() ? "💀" : h.getSymbol());
+                    } else {
+                        lane.append(" ");
+                    }
+                }
+                lane.append("|");
+
+                raceLanes.get(i).setText(lane.toString());
+            }
+
+            for (Part2.CustomHorse h : horseList) {
+                if (h.getDistanceTravelled() >= raceLength) {
+                    raceTimeline.stop();
+                    outputLabel.setText("🏁 Winner: " + h.getName());
+                    onFinish.run();
+                    return;
+                }
+            }
+
+            for (Part2.CustomHorse h : horseList) {
+                if (!h.hasFallen() && Math.random() < h.getConfidence()) {
+                    h.moveForward();
+                    if (Math.random() < (0.1 * h.getConfidence() * h.getConfidence())) {
+                        h.fall();
+                    }
+                }
+            }
+        });
+
+        raceTimeline.getKeyFrames().add(frame);
+        raceTimeline.play();
     }
 
 

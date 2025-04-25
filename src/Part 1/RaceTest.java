@@ -1,3 +1,4 @@
+package Part1;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -5,16 +6,16 @@ public class RaceTest {
 
     @Test
     public void testAddHorse() {
-        Race race = new Race(10);
-        Horse h = new Horse('♞', "TestHorse", 0.5);
+        Part1.Race race = new Part1.Race(10);
+        Part1.Horse h = new Part1.Horse('♞', "TestHorse", 0.5);
         race.addHorse(h, 1);  // We can't directly access lane1Horse, but no error = pass
         assertDoesNotThrow(() -> race.addHorse(h, 1));
     }
 
     @Test
     public void testHorseWinsRace() {
-        Race race = new Race(3);
-        Horse h = new Horse('♘', "Speedy", 0.9);
+        Part1.Race race = new Part1.Race(3);
+        Part1.Horse h = new Part1.Horse('♘', "Speedy", 0.9);
         h.moveForward();
         h.moveForward();
         h.moveForward();
@@ -23,8 +24,8 @@ public class RaceTest {
 
     @Test
     public void testRaceNotWonIfFallen() {
-        Race race = new Race(3);
-        Horse h = new Horse('H', "Tragic", 0.9);
+        Part1.Race race = new Part1.Race(3);
+        Part1.Horse h = new Part1.Horse('H', "Tragic", 0.9);
         h.moveForward();
         h.moveForward();
         h.moveForward();
@@ -34,7 +35,7 @@ public class RaceTest {
 
     @Test
     public void testHorseReset() {
-        Horse h = new Horse('♞', "ResetBoy", 0.9);
+        Part1.Horse h = new Part1.Horse('♞', "ResetBoy", 0.9);
         h.moveForward();
         h.moveForward();
         h.fall();
@@ -53,9 +54,9 @@ public class RaceTest {
 
 
     // Helper to access private method raceWonBy
-    private boolean invokeRaceWonBy(Race race, Horse h) {
+    private boolean invokeRaceWonBy(Part1.Race race, Part1.Horse h) {
         try {
-            var method = Race.class.getDeclaredMethod("raceWonBy", Horse.class);
+            var method = Part1.Race.class.getDeclaredMethod("raceWonBy", Part1.Horse.class);
             method.setAccessible(true);
             return (boolean) method.invoke(race, h);
         } catch (Exception e) {

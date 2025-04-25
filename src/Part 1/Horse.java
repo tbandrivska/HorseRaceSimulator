@@ -1,10 +1,14 @@
+package Part1;
+
 public class Horse {
     private String name;
     private char symbol;
     private int distanceTravelled;
     private boolean hasFallen;
     private double confidence; // between 0.0 and 1.0
+   public Horse() {
 
+   }
     public Horse(char horseSymbol, String horseName, double horseConfidence) {
         this.symbol = horseSymbol;
         this.name = horseName;

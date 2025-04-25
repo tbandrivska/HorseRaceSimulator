@@ -1,6 +1,6 @@
 package Part2;
 
-public class CustomHorse {
+public class CustomHorse extends Part1.Horse {
     private String name;
     private String breed;
     private String coatColour;
@@ -11,8 +11,6 @@ public class CustomHorse {
     private double speed;     // affects movement frequency
     private double stamina;   // affects how far the horse can go before slowing
 
-
-
     public CustomHorse(String name, String breed, String coatColour, char symbol, String saddleType, String horseshoeType, double confidence) {
         this.name = name;
         this.breed = breed;
@@ -22,6 +20,8 @@ public class CustomHorse {
         this.horseshoeType = horseshoeType;
         this.confidence = confidence;
     }
+
+
 public double getSpeed(){ return speed; }
     public double getStamina(){ return stamina; }
     public String getName() { return name; }
