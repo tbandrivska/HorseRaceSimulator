@@ -7,7 +7,11 @@ public class CustomHorse {
     private char symbol;
     private String saddleType;
     private String horseshoeType;
-    private double confidence;
+    private double confidence; // affects fall probability
+    private double speed;     // affects movement frequency
+    private double stamina;   // affects how far the horse can go before slowing
+
+
 
     public CustomHorse(String name, String breed, String coatColour, char symbol, String saddleType, String horseshoeType, double confidence) {
         this.name = name;
@@ -18,7 +22,8 @@ public class CustomHorse {
         this.horseshoeType = horseshoeType;
         this.confidence = confidence;
     }
-
+public double getSpeed(){ return speed; }
+    public double getStamina(){ return stamina; }
     public String getName() { return name; }
     public String getBreed() { return breed; }
     public String getCoatColour() { return coatColour; }

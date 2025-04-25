@@ -1,10 +1,10 @@
 package Part2;
 
 import java.awt.*;
-import java.util.Random;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
 
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -159,24 +159,21 @@ public class GUIApp extends Application {
                 result += "\n😢 You lost £" + bet + ".";
             }
 
-            int winnerIndex = new Random().nextInt(horseLabels.size());
-            //Displaying running the race
-            runRace(horseLabels.toArray(new Label[0]), winnerIndex, () -> {
-                String winnerName = "Horse " + (winnerIndex + 1);
-                String selected = betBox.getValue();
+            Map<Part2.CustomHorse, Double> progressMap = new HashMap<>();
 
-                boolean win = winnerName.equalsIgnoreCase(selected);
-                String result_ = "🏁 Race finished!\nWinner: " + winnerName;
-                result_ += win ? "\n🎉 You WIN!" : "\n😢 You lost.";
-                String bettingStats = "💵 Bet Placed On: " + selected + "\n" +
-                        "📈 Amount: £" + bet + "\n" +
-                        (win ? "🟢 RESULT: You WIN!" : "🔴 RESULT: You lost.") + "\n" +
-                        "💰 Wallet Balance: £" + String.format("%.2f", wallet);
+            for (Part2.CustomHorse h : horseList) {
+                double speedFactor = h.getSpeed(); // e.g., 1.0 = average, 1.2 = fast
+                double staminaFactor = h.getStamina();
+                double confidenceFactor = h.getConfidence();
 
-                statsLabel.setText(bettingStats);
+                // Formula for performance
+                double progress = speedFactor * 0.5 + staminaFactor * 0.3 + confidenceFactor * 0.2;
 
-                outputLabel.setText(result_);
-            });
+                progressMap.put(h, progress);
+            }
+            Part2.CustomHorse winnerHorse = Collections.max(progressMap.entrySet(), Map.Entry.comparingByValue()).getKey();
+
+
 
             walletLabel.setText("Wallet: £" + String.format("%.2f", wallet));
 
@@ -237,24 +234,46 @@ public class GUIApp extends Application {
         start(stage);
     }
 
-    private void runRace(Label[] horses, int winnerIndex, Runnable onFinish) {
-        // Reseting positions
-        for (Label horse : horses) {
-            horse.setTranslateX(0);
+    private void runRace(List<Label> horseLabels, int distance, Runnable onFinish) {
+        Map<Label, Double> progressScores = new HashMap<>();
+
+        // Score horses based on stats
+        for (int i = 0; i < horseLabels.size(); i++) {
+            Part2.CustomHorse horse = horseList.get(i);
+            Label horseLabel = horseLabels.get(i);
+
+            double base = (horse.getSpeed() * 0.5) + (horse.getStamina() * 0.3) + (horse.getConfidence() * 0.2);
+            double noise = 0.95 + (Math.random() * 0.1);
+            double progressScore = base * noise;
+
+            progressScores.put(horseLabel, progressScore);
         }
 
-        // Animating them
-        for (int i = 0; i < horses.length; i++) {
-            TranslateTransition t = new TranslateTransition(Duration.seconds(2 + Math.random()), horses[i]);
-            t.setToX(300);
-            if (i == horses.length - 1) {
-                t.setOnFinished(e -> onFinish.run());
+        // Rank horses by performance
+        List<Map.Entry<Label, Double>> ranked = new ArrayList<>(progressScores.entrySet());
+        ranked.sort((a, b) -> Double.compare(b.getValue(), a.getValue())); // Descending
+
+        double maxDuration = 5.0; // seconds
+
+        // Animate each horse individually
+        for (int i = 0; i < ranked.size(); i++) {
+            Label horseLabel = ranked.get(i).getKey();
+            double score = ranked.get(i).getValue();
+
+            double durationSeconds = maxDuration * (ranked.get(ranked.size() - 1).getValue() / score);
+
+            TranslateTransition move = new TranslateTransition(Duration.seconds(durationSeconds), horseLabel);
+            move.setByX(distance);
+
+            // When the fastest horse finishes, run onFinish
+            if (i == 0) {
+                move.setOnFinished(e -> onFinish.run());
             }
-            t.play();
+
+            move.play();
         }
-
-
     }
+
 
     public static void main(String[] args) {
         launch(args);

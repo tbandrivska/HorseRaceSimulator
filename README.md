@@ -24,7 +24,7 @@ Welcome to the Horse Race Simulator - a dynamic JavaFX application where you can
 
 ### Animated Races
 - Horses race across the screen using JavaFX `TranslateTransition`
-- Winner chosen randomly (can be expanded to stat-based)
+- Winner chosen based on best stats
 - Visual representation of the race in motion
 
 ### Stats & Feedback
