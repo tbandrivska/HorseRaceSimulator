@@ -9,6 +9,10 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -25,7 +29,7 @@ public class GUIApp extends Application {
 
 
     @Override
-    public void startRaceGUI(Stage primaryStage) {
+    public void start(Stage primaryStage) {
         Label previewLabel = new Label("🐎");
         raceTrack.getChildren().add(new Label("🏁 Race Track:"));
 
@@ -229,6 +233,10 @@ public class GUIApp extends Application {
         });
 
     }
+    public void startRaceGUI(Stage stage) {
+        start(stage);
+    }
+
     private void runRace(Label[] horses, int winnerIndex, Runnable onFinish) {
         // Reseting positions
         for (Label horse : horses) {
